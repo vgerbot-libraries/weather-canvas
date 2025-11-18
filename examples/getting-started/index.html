@@ -55,6 +55,13 @@
             margin-top: 1rem;
             border: 1px solid #dee2e6;
         }
+        
+        #canvas {
+            margin-top: 1rem;
+            border-radius: 8px;
+            width: 700px;
+            height: 300px;
+        }
 
         .description {
             line-height: 1.6;
@@ -68,7 +75,32 @@
         <a href="/" class="back-link">← Back to Examples List</a>
         <h1>🚀 Getting Started</h1>
         <p class="description">This is the simplest example demonstrating how to import and use the library's basic functionality.</p>
-        <div class="output" id="output">Loading...</div>
+        
+        <div class="controls">
+            <button id="start">Start</button>
+            <button id="stop">Stop</button>
+            <select name="weather" id="weather" title="Weather Type">
+                <option value="sunny">Sunny</option>
+                <option value="cloudy">Cloudy</option>
+                <option value="overcast">Overcast</option>
+                <option value="rainy">Rainy</option>
+                <option value="snowy">Snowy</option>
+                <option value="haze">Haze</option>
+                <option value="foggy">Foggy</option>
+            </select>
+            <select name="mode" id="mode" title="Time Mode">
+                <option value="day">Day</option>
+                <option value="night">Night</option>
+            </select>
+            <select name="intensity" id="intensity" title="Weather Intensity">
+                <option value="light">Light</option>
+                <option value="moderate">Moderate</option>
+                <option value="heavy">Heavy</option>
+            </select>
+        </div>
+        
+        <canvas id="canvas" width="700" height="300"></canvas>
+        
     </div>
     <script src="./index.ts" type="module"></script>
 </body>

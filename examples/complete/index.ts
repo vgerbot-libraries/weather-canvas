@@ -1,10 +1,10 @@
-import { hello } from '~/index';
+// import { hello } from '~/index';
 
 // Basic example
 document.getElementById('basic-demo')?.addEventListener('click', () => {
     const output = document.getElementById('basic-output');
     if (output) {
-        const result = hello();
+        const result = 'hello';
         output.textContent = `Result: ${result}`;
     }
 });
@@ -15,9 +15,9 @@ document.getElementById('advanced-demo')?.addEventListener('click', () => {
     if (output) {
         // Add more advanced feature demonstrations here
         const timestamp = new Date().toISOString();
-        output.textContent = `Current time: ${timestamp}\nResult: ${hello()}`;
+        output.textContent = `Current time: ${timestamp}\nResult: ${'hello'}`;
     }
 });
 
 console.log('Complete example loaded');
-console.log('Library test:', hello());
+// console.log('Library test:', hello());

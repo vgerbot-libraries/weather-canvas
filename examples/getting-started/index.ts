@@ -1,13 +1,27 @@
-import { hello } from '~/index';
+import { TimeMode, WeatherCanvasRenderer, WeatherIntensity, WeatherType } from '~/index';
 
-// Call library function
-const result = hello();
+const renderer = new WeatherCanvasRenderer(document.getElementById('canvas') as HTMLCanvasElement);
 
-// Output to console
-console.log('Library function result:', result);
+renderer.render('sunny', 'night', WeatherIntensity.light);
 
-// Display on page
-const outputElement = document.getElementById('output');
-if (outputElement) {
-    outputElement.textContent = `Library function called successfully!\nResult: ${result}`;
-}
+renderer.start();
+
+document.getElementById('start')?.addEventListener('click', () => {
+    renderer.start();
+});
+
+document.getElementById('stop')?.addEventListener('click', () => {
+    renderer.stop();
+});
+
+document.getElementById('weather')?.addEventListener('change', event => {
+    renderer.setWeatherType((event.target as HTMLSelectElement).value as unknown as WeatherType);
+});
+
+document.getElementById('mode')?.addEventListener('change', event => {
+    renderer.setMode((event.target as HTMLSelectElement).value as unknown as TimeMode);
+});
+
+document.getElementById('intensity')?.addEventListener('change', event => {
+    renderer.setIntensity((event.target as HTMLSelectElement).value as unknown as WeatherIntensity);
+});
