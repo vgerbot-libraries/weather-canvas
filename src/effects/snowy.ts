@@ -4,43 +4,34 @@ import { WeatherEffect } from './base';
 import { ParticlePool } from '../utils/particles';
 import { randomBetween } from '../utils/math';
 import { RenderingContext2D, TimeMode, WeatherIntensity } from '../types';
+import { SkyRenderer, BackgroundColors } from '../utils/sky-renderer';
+
+const BACKGROUND_COLORS: BackgroundColors = {
+    day: ['#e0e7ef', '#f0f4f8'],
+    night: ['#1a2b4a', '#2d4563'],
+};
 
 export class SnowyEffect extends WeatherEffect {
     private particlePool: ParticlePool;
-    private mode: TimeMode;
+    private skyRenderer: SkyRenderer;
 
     constructor(
         ctx: RenderingContext2D,
         width: number,
         height: number,
-        mode: TimeMode = 'day',
+        private mode: TimeMode = 'day',
         intensity: WeatherIntensity = WeatherIntensity.moderate
     ) {
         super(ctx, width, height, intensity);
         this.particlePool = new ParticlePool(200);
-        this.mode = mode;
+        this.skyRenderer = new SkyRenderer(ctx, width, height);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     render(_time: number): void {
-        this.drawBackground();
+        this.skyRenderer.drawBackground(BACKGROUND_COLORS, this.mode);
         this.drawSnow();
-        this.drawMoon();
-    }
-
-    private drawBackground(): void {
-        const gradient = this.ctx.createLinearGradient(0, 0, 0, this.height);
-
-        if (this.mode === 'night') {
-            gradient.addColorStop(0, '#1a2b4a');
-            gradient.addColorStop(1, '#2d4563');
-        } else {
-            gradient.addColorStop(0, '#e0e7ef');
-            gradient.addColorStop(1, '#f0f4f8');
-        }
-
-        this.ctx.fillStyle = gradient;
-        this.ctx.fillRect(0, 0, this.width, this.height);
+        this.skyRenderer.drawMoon(this.mode);
     }
 
     private drawSnow(): void {
@@ -86,42 +77,5 @@ export class SnowyEffect extends WeatherEffect {
         }
 
         this.ctx.restore();
-    }
-
-    private drawMoon(): void {
-        if (this.mode === 'night') {
-            const moonX = this.width * 0.75;
-            const moonY = this.height * 0.25;
-            const moonRadius = 35;
-
-            // Moon glow
-            const glowGradient = this.ctx.createRadialGradient(
-                moonX,
-                moonY,
-                moonRadius * 0.5,
-                moonX,
-                moonY,
-                moonRadius * 2
-            );
-            glowGradient.addColorStop(0, 'rgba(240, 248, 255, 0.2)');
-            glowGradient.addColorStop(1, 'rgba(240, 248, 255, 0)');
-            this.ctx.fillStyle = glowGradient;
-            this.ctx.fillRect(moonX - moonRadius * 2, moonY - moonRadius * 2, moonRadius * 4, moonRadius * 4);
-
-            // Moon
-            this.ctx.fillStyle = '#f0f8ff';
-            this.ctx.beginPath();
-            this.ctx.arc(moonX, moonY, moonRadius, 0, Math.PI * 2);
-            this.ctx.fill();
-
-            // Moon craters
-            this.ctx.fillStyle = 'rgba(200, 210, 220, 0.3)';
-            this.ctx.beginPath();
-            this.ctx.arc(moonX - 10, moonY - 8, 6, 0, Math.PI * 2);
-            this.ctx.fill();
-            this.ctx.beginPath();
-            this.ctx.arc(moonX + 8, moonY + 5, 4, 0, Math.PI * 2);
-            this.ctx.fill();
-        }
     }
 }
