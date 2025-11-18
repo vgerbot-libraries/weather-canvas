@@ -8,4 +8,4 @@ export * from './effects';
 export { ParticlePool } from './utils/particles';
 export { randomBetween, clamp, easeInOutQuad, easeInOutCubic } from './utils/math';
 
-import './custom-element';
+export * from './custom-element';

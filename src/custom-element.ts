@@ -4,7 +4,7 @@ import { WeatherType, TimeMode, WeatherIntensity } from './types';
 const DEFAULT_WIDTH = 700;
 const DEFAULT_HEIGHT = 400;
 
-class WeatherCanvas extends HTMLElement {
+export class WeatherCanvas extends HTMLElement {
     private renderer: WeatherCanvasRenderer | null = null;
     private canvas: HTMLCanvasElement | null = null;
     private shadow: ShadowRoot;
