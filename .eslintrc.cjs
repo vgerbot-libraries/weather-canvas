@@ -7,6 +7,7 @@ module.exports = {
             extends: [
                 //  Use the recommended rules from the @typescript-eslint/eslint-plugin
                 'plugin:@typescript-eslint/recommended',
+                'prettier',
             ],
             parserOptions: {
                 project: [__dirname + '/tsconfig.json'],
@@ -27,9 +28,5 @@ module.exports = {
         'prettier/prettier': 'error',
         'no-console': 'off',
         'no-bitwise': 'off',
-        quotes: ['error', 'single'],
-        'max-len': ['error', 120],
-        'arrow-parens': 'off',
-        indent: ['error', 4],
     },
 };
