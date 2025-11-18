@@ -17,7 +17,6 @@ interface RainDrop {
     length: number;
     speed: number;
     opacity: number;
-    color: string; // Pre-computed color string
 }
 
 export class RainyEffect extends WeatherEffect {
@@ -57,14 +56,12 @@ export class RainyEffect extends WeatherEffect {
 
         this.rainDrops = [];
         for (let i = 0; i < particleCount; i++) {
-            const opacity = randomBetween(0.5, 1);
             this.rainDrops.push({
                 x: Math.random() * this.width,
                 y: Math.random() * this.height,
                 length: randomBetween(10, 30),
                 speed: this.getSpeed(randomBetween(5, 10)),
-                opacity: opacity,
-                color: `rgba(174, 194, 224, ${opacity})`, // Pre-compute color string
+                opacity: randomBetween(0.5, 1),
             });
         }
 
@@ -93,9 +90,6 @@ export class RainyEffect extends WeatherEffect {
             this.initRainDrops();
         }
 
-        // Set common properties once
-        this.ctx.lineWidth = 1;
-
         this.rainDrops.forEach(drop => {
             drop.y += drop.speed;
             if (drop.y > this.height) {
@@ -103,8 +97,8 @@ export class RainyEffect extends WeatherEffect {
                 drop.x = Math.random() * this.width;
             }
 
-            // Use pre-computed color
-            this.ctx.strokeStyle = drop.color;
+            this.ctx.strokeStyle = `rgba(174, 194, 224, ${drop.opacity})`;
+            this.ctx.lineWidth = 1;
             this.ctx.beginPath();
             this.ctx.moveTo(drop.x, drop.y);
             this.ctx.lineTo(drop.x, drop.y + drop.length);

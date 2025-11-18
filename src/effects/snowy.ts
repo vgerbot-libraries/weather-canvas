@@ -51,12 +51,7 @@ export class SnowyEffect extends WeatherEffect {
         }
 
         this.particlePool.update();
-        
-        // Set common properties once
         this.ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-        this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
-        this.ctx.lineWidth = 1;
-        
         this.particlePool.getActive().forEach(particle => {
             this.ctx.globalAlpha = particle.opacity!;
             this.drawSnowflake(particle.x, particle.y, particle.size!);

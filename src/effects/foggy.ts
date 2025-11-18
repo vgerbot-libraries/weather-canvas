@@ -16,7 +16,6 @@ interface FogParticle {
     radius: number;
     speed: number;
     opacity: number;
-    color: string; // Pre-computed color string
 }
 
 export class FoggyEffect extends WeatherEffect {
@@ -52,16 +51,13 @@ export class FoggyEffect extends WeatherEffect {
         const particleCount = this.getParticleCount(baseCount);
 
         this.particles = [];
-        const color = '180, 190, 200';
         for (let i = 0; i < particleCount; i++) {
-            const opacity = this.getOpacity(randomBetween(0.05, 0.2));
             this.particles.push({
                 x: Math.random() * this.width,
                 y: Math.random() * this.height,
                 radius: randomBetween(30, 70),
                 speed: this.getSpeed(randomBetween(0.2, 0.7)),
-                opacity: opacity,
-                color: `rgba(${color}, ${opacity})`, // Pre-compute color string
+                opacity: this.getOpacity(randomBetween(0.05, 0.2)),
             });
         }
 
@@ -73,10 +69,6 @@ export class FoggyEffect extends WeatherEffect {
             this.initParticles();
         }
 
-        // Use shadowBlur for softer edges instead of expensive gradients
-        this.ctx.shadowBlur = 20;
-        this.ctx.shadowColor = 'rgba(180, 190, 200, 0.5)';
-
         this.particles.forEach(particle => {
             particle.x += particle.speed;
 
@@ -84,16 +76,23 @@ export class FoggyEffect extends WeatherEffect {
                 particle.x = -particle.radius;
             }
 
-            // Use simple fill with shadow for better performance
-            this.ctx.fillStyle = particle.color;
+            const gradient = this.ctx.createRadialGradient(
+                particle.x,
+                particle.y,
+                0,
+                particle.x,
+                particle.y,
+                particle.radius
+            );
+            const color = '180, 190, 200';
+            gradient.addColorStop(0, `rgba(${color}, ${particle.opacity})`);
+            gradient.addColorStop(1, `rgba(${color}, 0)`);
+
+            this.ctx.fillStyle = gradient;
             this.ctx.beginPath();
             this.ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
             this.ctx.fill();
         });
-
-        // Reset shadow
-        this.ctx.shadowBlur = 0;
-        this.ctx.shadowColor = 'transparent';
     }
 
     /**

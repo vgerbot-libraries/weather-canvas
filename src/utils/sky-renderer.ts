@@ -11,10 +11,6 @@ export interface BackgroundColors {
 export class SkyRenderer {
     private stars: Star[] = [];
     private starsInitialized = false;
-    private backgroundGradients: Map<string, CanvasGradient> = new Map();
-    private sunGlowGradient: CanvasGradient | null = null;
-    private moonGlowGradient: CanvasGradient | null = null;
-    private lastHeight: number = 0;
 
     constructor(
         private ctx: RenderingContext2D,
@@ -23,23 +19,10 @@ export class SkyRenderer {
     ) {}
 
     drawBackground(colors: BackgroundColors, mode: TimeMode): void {
+        const gradient = this.ctx.createLinearGradient(0, 0, 0, this.height);
         const [top, bottom] = mode === 'night' ? colors.night : colors.day;
-        const key = `${top}-${bottom}-${this.height}`;
-        
-        // Recreate gradient if height changed
-        if (this.lastHeight !== this.height) {
-            this.backgroundGradients.clear();
-            this.lastHeight = this.height;
-        }
-        
-        let gradient = this.backgroundGradients.get(key);
-        if (!gradient) {
-            gradient = this.ctx.createLinearGradient(0, 0, 0, this.height);
-            gradient.addColorStop(0, top);
-            gradient.addColorStop(1, bottom);
-            this.backgroundGradients.set(key, gradient);
-        }
-        
+        gradient.addColorStop(0, top);
+        gradient.addColorStop(1, bottom);
         this.ctx.fillStyle = gradient;
         this.ctx.fillRect(0, 0, this.width, this.height);
     }
@@ -53,13 +36,11 @@ export class SkyRenderer {
         const sunY = this.height * 0.25;
         const sunRadius = 40;
 
-        // Sun glow - cache gradient
-        if (!this.sunGlowGradient) {
-            this.sunGlowGradient = this.ctx.createRadialGradient(sunX, sunY, sunRadius * 0.5, sunX, sunY, sunRadius * 2);
-            this.sunGlowGradient.addColorStop(0, 'rgba(255, 223, 0, 0.3)');
-            this.sunGlowGradient.addColorStop(1, 'rgba(255, 223, 0, 0)');
-        }
-        this.ctx.fillStyle = this.sunGlowGradient;
+        // Sun glow
+        const glowGradient = this.ctx.createRadialGradient(sunX, sunY, sunRadius * 0.5, sunX, sunY, sunRadius * 2);
+        glowGradient.addColorStop(0, 'rgba(255, 223, 0, 0.3)');
+        glowGradient.addColorStop(1, 'rgba(255, 223, 0, 0)');
+        this.ctx.fillStyle = glowGradient;
         this.ctx.fillRect(sunX - sunRadius * 2, sunY - sunRadius * 2, sunRadius * 4, sunRadius * 4);
 
         // Sun
@@ -78,20 +59,18 @@ export class SkyRenderer {
         const moonY = this.height * 0.25;
         const moonRadius = 35;
 
-        // Moon glow - cache gradient
-        if (!this.moonGlowGradient) {
-            this.moonGlowGradient = this.ctx.createRadialGradient(
-                moonX,
-                moonY,
-                moonRadius * 0.5,
-                moonX,
-                moonY,
-                moonRadius * 2
-            );
-            this.moonGlowGradient.addColorStop(0, 'rgba(240, 248, 255, 0.2)');
-            this.moonGlowGradient.addColorStop(1, 'rgba(240, 248, 255, 0)');
-        }
-        this.ctx.fillStyle = this.moonGlowGradient;
+        // Moon glow
+        const glowGradient = this.ctx.createRadialGradient(
+            moonX,
+            moonY,
+            moonRadius * 0.5,
+            moonX,
+            moonY,
+            moonRadius * 2
+        );
+        glowGradient.addColorStop(0, 'rgba(240, 248, 255, 0.2)');
+        glowGradient.addColorStop(1, 'rgba(240, 248, 255, 0)');
+        this.ctx.fillStyle = glowGradient;
         this.ctx.fillRect(moonX - moonRadius * 2, moonY - moonRadius * 2, moonRadius * 4, moonRadius * 4);
 
         // Moon
@@ -137,22 +116,15 @@ export class SkyRenderer {
             return;
         }
 
-        // Batch draw stars with same style
-        this.ctx.fillStyle = 'rgba(255, 255, 255, 1)';
-        this.ctx.beginPath();
-        
         this.stars.forEach(star => {
             star.phase += star.twinkleSpeed;
             const opacity = 0.5 + Math.sin(star.phase) * 0.5;
-            
-            // Use globalAlpha for opacity to avoid string concatenation
-            this.ctx.globalAlpha = opacity;
+
+            this.ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
             this.ctx.beginPath();
             this.ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
             this.ctx.fill();
         });
-        
-        this.ctx.globalAlpha = 1;
     }
 
     resize(width: number, height: number): void {
@@ -160,10 +132,5 @@ export class SkyRenderer {
         this.height = height;
         this.starsInitialized = false;
         this.stars = [];
-        // Clear cached gradients when resizing
-        this.backgroundGradients.clear();
-        this.sunGlowGradient = null;
-        this.moonGlowGradient = null;
-        this.lastHeight = height;
     }
 }

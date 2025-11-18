@@ -27,19 +27,19 @@ export class OvercastEffect extends WeatherEffect {
 
         // Initialize clouds
         this.cloudRenderer.initializeClouds({
-            count: intensity === WeatherIntensity.light ? 3 : intensity === WeatherIntensity.heavy ? 14 : 7,
+            count: 7,
             widthRange: [100, 200],
             heightRange: [60, 100],
-            speedRange: [0.05, 0.25],
+            speedRange: [0.05, 0.15],
             opacityRange: [0.6, 1],
             yRange: [0, 0.5],
-            style: 'rounded',
+            style: 'elliptical',
         });
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     render(_time: number): void {
         this.skyRenderer.drawBackground(BACKGROUND_COLORS, this.mode);
-        this.cloudRenderer.drawClouds(this.mode);
+        this.cloudRenderer.drawClouds(this.mode, 'elliptical');
     }
 }
