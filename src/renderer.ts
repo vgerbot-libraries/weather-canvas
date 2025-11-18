@@ -103,7 +103,7 @@ export class WeatherCanvasRenderer {
             case 'foggy':
                 return new FoggyEffect(this.ctx, this.width, this.height, mode, intensity);
             case 'thunderstorm':
-                return new ThunderstormEffect(this.ctx, this.width, this.height, intensity);
+                return new ThunderstormEffect(this.ctx, this.width, this.height, mode, intensity);
             default:
                 return new SunnyEffect(this.ctx, this.width, this.height, mode, intensity);
         }

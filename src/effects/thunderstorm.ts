@@ -1,95 +1,279 @@
 // src/effects/thunderstorm.ts
 
 import { WeatherEffect } from './base';
-import { ParticlePool } from '../utils/particles';
 import { randomBetween } from '../utils/math';
-import { RenderingContext2D, WeatherIntensity } from '../types';
+import { RenderingContext2D, TimeMode, WeatherIntensity, Cloud, Star } from '../types';
+
+interface RainDrop {
+    x: number;
+    y: number;
+    length: number;
+    speed: number;
+    opacity: number;
+}
 
 export class ThunderstormEffect extends WeatherEffect {
-    private particlePool: ParticlePool;
-    private lightningIntensity = 0;
+    private rainDrops: RainDrop[] = [];
+    private clouds: Cloud[] = [];
+    private stars: Star[] = [];
+    private lightningFlash = 0;
+    private mode: TimeMode;
+    private particlesInitialized = false;
+    private cloudsInitialized = false;
+    private starsInitialized = false;
 
     constructor(
         ctx: RenderingContext2D,
         width: number,
         height: number,
+        mode: TimeMode = 'day',
         intensity: WeatherIntensity = WeatherIntensity.moderate
     ) {
         super(ctx, width, height, intensity);
-        this.particlePool = new ParticlePool(600);
+        this.mode = mode;
     }
 
-    render(): void {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    render(_time: number): void {
+        this.drawBackground();
+        this.drawStars();
+        this.drawMoon();
+        this.drawClouds();
+        this.drawRain();
+        this.drawLightning();
+    }
+
+    private drawBackground(): void {
         const gradient = this.ctx.createLinearGradient(0, 0, 0, this.height);
-        gradient.addColorStop(0, '#1a0f2e');
-        gradient.addColorStop(0.5, '#2d1b4e');
-        gradient.addColorStop(1, '#1a0f2e');
+
+        if (this.mode === 'night') {
+            gradient.addColorStop(0, '#1a1a2e');
+            gradient.addColorStop(1, '#16213e');
+        } else {
+            gradient.addColorStop(0, '#4a5568');
+            gradient.addColorStop(1, '#718096');
+        }
+
         this.ctx.fillStyle = gradient;
         this.ctx.fillRect(0, 0, this.width, this.height);
+    }
 
-        for (let i = 0; i < 15; i++) {
-            this.particlePool.get(
-                Math.random() * this.width,
-                Math.random() * this.height - this.height * 0.5,
-                0,
-                randomBetween(6, 10),
-                this.height / 3
-            );
+    private initRainDrops(): void {
+        if (this.particlesInitialized) {
+            return;
         }
 
-        this.particlePool.update();
-        this.ctx.strokeStyle = 'rgba(150, 180, 255, 0.9)';
-        this.ctx.lineWidth = 2;
-        this.particlePool.getActive().forEach(particle => {
-            this.ctx.globalAlpha = (particle.opacity ?? 1) * 0.9;
+        const baseCount = 150;
+        const particleCount = this.getParticleCount(baseCount);
+
+        this.rainDrops = [];
+        for (let i = 0; i < particleCount; i++) {
+            this.rainDrops.push({
+                x: Math.random() * this.width,
+                y: Math.random() * this.height,
+                length: randomBetween(10, 30), // Math.random() * 20 + 10
+                speed: this.getSpeed(randomBetween(5, 10)), // Math.random() * 5 + 5, adjusted by intensity
+                opacity: randomBetween(0.5, 1), // Math.random() * 0.5 + 0.5
+            });
+        }
+
+        this.particlesInitialized = true;
+    }
+
+    private initializeClouds(): void {
+        if (this.cloudsInitialized) {
+            return;
+        }
+
+        this.clouds = [];
+        const cloudCount = 3; // thunderstorm has 3 clouds
+
+        for (let i = 0; i < cloudCount; i++) {
+            this.clouds.push({
+                x: Math.random() * this.width,
+                y: Math.random() * (this.height * 0.4),
+                width: randomBetween(80, 200), // Math.random() * 120 + 80
+                height: randomBetween(30, 70), // Math.random() * 40 + 30
+                speed: randomBetween(0.1, 0.4), // Math.random() * 0.3 + 0.1
+                opacity: 0.5,
+            });
+        }
+
+        this.cloudsInitialized = true;
+    }
+
+    private initializeStars(): void {
+        if (this.starsInitialized) {
+            return;
+        }
+
+        this.stars = [];
+        if (this.mode === 'night') {
+            for (let i = 0; i < 100; i++) {
+                this.stars.push({
+                    x: Math.random() * this.width,
+                    y: Math.random() * (this.height * 0.6),
+                    radius: randomBetween(0.5, 1.5),
+                    opacity: 0.5,
+                    twinkleSpeed: randomBetween(0.02, 0.05),
+                    phase: Math.random() * Math.PI * 2,
+                });
+            }
+        }
+
+        this.starsInitialized = true;
+    }
+
+    private drawStars(): void {
+        if (!this.starsInitialized) {
+            this.initializeStars();
+        }
+
+        if (this.mode === 'night' && this.stars.length > 0) {
+            this.stars.forEach(star => {
+                star.phase += star.twinkleSpeed;
+                const opacity = 0.5 + Math.sin(star.phase) * 0.5;
+
+                this.ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                this.ctx.beginPath();
+                this.ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                this.ctx.fill();
+            });
+        }
+    }
+
+    private drawMoon(): void {
+        if (this.mode === 'night') {
+            const moonX = this.width * 0.75;
+            const moonY = this.height * 0.25;
+            const moonRadius = 35;
+
+            // Moon glow
+            const glowGradient = this.ctx.createRadialGradient(
+                moonX,
+                moonY,
+                moonRadius * 0.5,
+                moonX,
+                moonY,
+                moonRadius * 2
+            );
+            glowGradient.addColorStop(0, 'rgba(240, 248, 255, 0.2)');
+            glowGradient.addColorStop(1, 'rgba(240, 248, 255, 0)');
+            this.ctx.fillStyle = glowGradient;
+            this.ctx.fillRect(moonX - moonRadius * 2, moonY - moonRadius * 2, moonRadius * 4, moonRadius * 4);
+
+            // Moon
+            this.ctx.fillStyle = '#f0f8ff';
             this.ctx.beginPath();
-            this.ctx.moveTo(particle.x, particle.y);
-            this.ctx.lineTo(particle.x, particle.y + 15);
+            this.ctx.arc(moonX, moonY, moonRadius, 0, Math.PI * 2);
+            this.ctx.fill();
+
+            // Moon craters
+            this.ctx.fillStyle = 'rgba(200, 210, 220, 0.3)';
+            this.ctx.beginPath();
+            this.ctx.arc(moonX - 10, moonY - 8, 6, 0, Math.PI * 2);
+            this.ctx.fill();
+            this.ctx.beginPath();
+            this.ctx.arc(moonX + 8, moonY + 5, 4, 0, Math.PI * 2);
+            this.ctx.fill();
+        }
+    }
+
+    private drawClouds(): void {
+        if (!this.cloudsInitialized) {
+            this.initializeClouds();
+        }
+
+        this.clouds.forEach(cloud => {
+            cloud.x += cloud.speed;
+            if (cloud.x > this.width + cloud.width) {
+                cloud.x = -cloud.width;
+            }
+
+            const cloudColor =
+                this.mode === 'night' ? `rgba(70, 80, 90, ${cloud.opacity})` : `rgba(255, 255, 255, ${cloud.opacity})`;
+
+            this.ctx.fillStyle = cloudColor;
+            this.drawCloud(cloud.x, cloud.y, cloud.width, cloud.height);
+        });
+    }
+
+    private drawCloud(x: number, y: number, w: number, h: number): void {
+        this.ctx.beginPath();
+        this.ctx.arc(x, y, h * 0.6, 0, Math.PI * 2);
+        this.ctx.arc(x + w * 0.3, y - h * 0.2, h * 0.7, 0, Math.PI * 2);
+        this.ctx.arc(x + w * 0.7, y, h * 0.6, 0, Math.PI * 2);
+        this.ctx.arc(x + w * 0.5, y + h * 0.2, h * 0.5, 0, Math.PI * 2);
+        this.ctx.fill();
+    }
+
+    private drawRain(): void {
+        if (!this.particlesInitialized) {
+            this.initRainDrops();
+        }
+
+        this.rainDrops.forEach(drop => {
+            drop.y += drop.speed;
+            if (drop.y > this.height) {
+                drop.y = -drop.length;
+                drop.x = Math.random() * this.width;
+            }
+
+            this.ctx.strokeStyle = `rgba(174, 194, 224, ${drop.opacity})`;
+            this.ctx.lineWidth = 1;
+            this.ctx.beginPath();
+            this.ctx.moveTo(drop.x, drop.y);
+            this.ctx.lineTo(drop.x, drop.y + drop.length);
             this.ctx.stroke();
         });
-        this.ctx.globalAlpha = 1;
-
-        this.lightningIntensity = Math.max(0, this.lightningIntensity - 0.05);
-
-        if (Math.random() < 0.02) {
-            this.lightningIntensity = 1;
-            this.drawLightning();
-        } else if (this.lightningIntensity > 0) {
-            this.drawLightningFlash();
-        }
     }
 
     private drawLightning(): void {
-        const x = Math.random() * this.width;
-        const y = Math.random() * (this.height * 0.4);
-
-        this.ctx.strokeStyle = 'rgba(255, 255, 150, 0.9)';
-        this.ctx.lineWidth = 4;
-        this.ctx.shadowBlur = 20;
-        this.ctx.shadowColor = 'rgba(255, 200, 0, 0.8)';
-
-        let currentX = x;
-        let currentY = y;
-
-        for (let i = 0; i < 8; i++) {
-            const nextX = currentX + randomBetween(-40, 40);
-            const nextY = currentY + randomBetween(20, 60);
-
-            this.ctx.beginPath();
-            this.ctx.moveTo(currentX, currentY);
-            this.ctx.lineTo(nextX, nextY);
-            this.ctx.stroke();
-
-            currentX = nextX;
-            currentY = nextY;
+        // Random lightning flash
+        if (Math.random() < 0.01) {
+            this.lightningFlash = 1;
         }
 
-        this.ctx.shadowBlur = 0;
+        if (this.lightningFlash > 0) {
+            // Draw flash overlay
+            this.ctx.fillStyle = `rgba(255, 255, 255, ${this.lightningFlash * 0.3})`;
+            this.ctx.fillRect(0, 0, this.width, this.height);
+
+            // Draw lightning bolt
+            if (this.lightningFlash > 0.7) {
+                this.ctx.strokeStyle = `rgba(255, 255, 200, ${this.lightningFlash})`;
+                this.ctx.lineWidth = 3;
+                this.ctx.beginPath();
+
+                let x = this.width * 0.3 + Math.random() * this.width * 0.4;
+                let y = 0;
+                this.ctx.moveTo(x, y);
+
+                for (let i = 0; i < 5; i++) {
+                    x += (Math.random() - 0.5) * 40;
+                    y += this.height / 5;
+                    this.ctx.lineTo(x, y);
+                }
+
+                this.ctx.stroke();
+            }
+
+            this.lightningFlash -= 0.05;
+        }
     }
 
-    private drawLightningFlash(): void {
-        const opacity = this.lightningIntensity * 0.3;
-        this.ctx.fillStyle = `rgba(255, 255, 200, ${opacity})`;
-        this.ctx.fillRect(0, 0, this.width, this.height);
+    /**
+     * Reset particles when canvas size changes
+     */
+    resize(width: number, height: number): void {
+        this.width = width;
+        this.height = height;
+        this.particlesInitialized = false;
+        this.rainDrops = [];
+        this.cloudsInitialized = false;
+        this.clouds = [];
+        this.starsInitialized = false;
+        this.stars = [];
+        this.lightningFlash = 0;
     }
 }

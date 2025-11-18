@@ -34,21 +34,25 @@ export class OvercastEffect extends WeatherEffect {
         }
     }
 
-    render(): void {
-        if (this.mode === 'day') {
-            const gradient = this.ctx.createLinearGradient(0, 0, 0, this.height);
-            gradient.addColorStop(0, '#808080');
-            gradient.addColorStop(1, '#A9A9A9');
-            this.ctx.fillStyle = gradient;
-        } else {
-            const gradient = this.ctx.createLinearGradient(0, 0, 0, this.height);
-            gradient.addColorStop(0, '#1a1a1a');
-            gradient.addColorStop(1, '#2d2d2d');
-            this.ctx.fillStyle = gradient;
-        }
-        this.ctx.fillRect(0, 0, this.width, this.height);
-
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    render(_time: number): void {
+        this.drawBackground();
         this.drawClouds();
+    }
+
+    private drawBackground(): void {
+        const gradient = this.ctx.createLinearGradient(0, 0, 0, this.height);
+
+        if (this.mode === 'night') {
+            gradient.addColorStop(0, '#0f1624');
+            gradient.addColorStop(1, '#1f2937');
+        } else {
+            gradient.addColorStop(0, '#778899');
+            gradient.addColorStop(1, '#a0aec0');
+        }
+
+        this.ctx.fillStyle = gradient;
+        this.ctx.fillRect(0, 0, this.width, this.height);
     }
 
     private drawClouds(): void {
@@ -58,7 +62,10 @@ export class OvercastEffect extends WeatherEffect {
                 cloud.x = -cloud.width;
             }
 
-            this.ctx.fillStyle = `rgba(100, 100, 100, ${cloud.opacity})`;
+            const cloudColor =
+                this.mode === 'night' ? `rgba(70, 80, 90, ${cloud.opacity})` : `rgba(130, 140, 150, ${cloud.opacity})`;
+
+            this.ctx.fillStyle = cloudColor;
             this.drawCloud(cloud.x, cloud.y, cloud.width, cloud.height);
         });
     }
