@@ -7,3 +7,5 @@ export { INTENSITY_CONFIG, getIntensityConfig } from './types';
 export * from './effects';
 export { ParticlePool } from './utils/particles';
 export { randomBetween, clamp, easeInOutQuad, easeInOutCubic } from './utils/math';
+
+import './custom-element';
