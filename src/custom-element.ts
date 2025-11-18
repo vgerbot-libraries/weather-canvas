@@ -18,6 +18,7 @@ export class WeatherCanvas extends HTMLElement {
                     display: inline-block;
                     width: fit-content;
                     height: fit-content;
+                    overflow: hidden;
                 }
                 canvas {
                     width: 100%;

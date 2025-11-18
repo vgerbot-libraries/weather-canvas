@@ -32,6 +32,7 @@ export class HazeEffect extends WeatherEffect {
     ) {
         super(ctx, width, height, intensity);
         this.skyRenderer = new SkyRenderer(ctx, width, height);
+        this.skyRenderer.initializeStars(this.mode);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
