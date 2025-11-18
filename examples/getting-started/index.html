@@ -6,80 +6,38 @@
     <meta name="description" content="The simplest example demonstrating how to import and use the library's basic functionality">
     <meta name="icon" content="🚀">
     <title>Getting Started</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#667eea',
+                        secondary: '#764ba2',
+                    }
+                }
+            }
         }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 2rem;
-            color: #333;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-        }
-
-        h1 {
-            color: #667eea;
-            margin-bottom: 1rem;
-        }
-
-        .back-link {
-            display: inline-block;
-            margin-bottom: 1rem;
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .back-link:hover {
-            text-decoration: underline;
-        }
-
-        .output {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-radius: 8px;
-            font-family: monospace;
-            margin-top: 1rem;
-            border: 1px solid #dee2e6;
-        }
-        
-        #canvas {
-            margin-top: 1rem;
-            border-radius: 8px;
-            width: 700px;
-            height: 300px;
-        }
-
-        .description {
-            line-height: 1.6;
-            margin-bottom: 1rem;
-            color: #495057;
-        }
-    </style>
+    </script>
 </head>
-<body>
-    <div class="container">
-        <a href="/" class="back-link">← Back to Examples List</a>
-        <h1>🚀 Getting Started</h1>
-        <p class="description">This is the simplest example demonstrating how to import and use the library's basic functionality.</p>
+<body class="font-sans bg-gradient-to-br from-indigo-500 via-purple-500 to-purple-600 min-h-screen p-8 text-gray-800">
+    <div class="max-w-3xl mx-auto bg-white rounded-2xl p-8 shadow-2xl">
+        <a href="/" class="inline-block mb-4 text-indigo-600 hover:text-indigo-700 hover:underline font-medium transition-colors">
+            ← Back to Examples List
+        </a>
+        <h1 class="text-indigo-600 mb-4 text-3xl font-bold">🚀 Getting Started</h1>
+        <p class="leading-relaxed mb-4 text-gray-600">
+            This is the simplest example demonstrating how to import and use the library's basic functionality.
+        </p>
         
-        <div class="controls">
-            <button id="start">Start</button>
-            <button id="stop">Stop</button>
-            <select name="weather" id="weather" title="Weather Type">
+        <div class="controls flex flex-wrap gap-3 mb-4">
+            <button id="start" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors font-medium">
+                Start
+            </button>
+            <button id="stop" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors font-medium">
+                Stop
+            </button>
+            <select name="weather" id="weather" title="Weather Type" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-gray-700">
                 <option value="sunny">Sunny</option>
                 <option value="cloudy">Cloudy</option>
                 <option value="overcast">Overcast</option>
@@ -87,19 +45,20 @@
                 <option value="snowy">Snowy</option>
                 <option value="haze">Haze</option>
                 <option value="foggy">Foggy</option>
+                <option value="thunderstorm">Thunderstorm</option>
             </select>
-            <select name="mode" id="mode" title="Time Mode">
+            <select name="mode" id="mode" title="Time Mode" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-gray-700">
                 <option value="day">Day</option>
                 <option value="night">Night</option>
             </select>
-            <select name="intensity" id="intensity" title="Weather Intensity">
+            <select name="intensity" id="intensity" title="Weather Intensity" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-gray-700">
                 <option value="light">Light</option>
                 <option value="moderate">Moderate</option>
                 <option value="heavy">Heavy</option>
             </select>
         </div>
         
-        <canvas id="canvas" width="700" height="300"></canvas>
+        <canvas id="canvas" width="700" height="300" class="mt-4 rounded-lg w-full max-w-full"></canvas>
         
     </div>
     <script src="./index.ts" type="module"></script>
