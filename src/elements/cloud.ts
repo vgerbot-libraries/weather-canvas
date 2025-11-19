@@ -1,75 +1,86 @@
-// src/utils/cloud-renderer.ts
+import { BaseElement } from './base';
+import { RenderingContext2D, Cloud, TimeMode, CloudConfig } from '../types';
+import { randomBetween } from '../utils/math';
 
-import { RenderingContext2D, Cloud, TimeMode } from '../types';
-import { randomBetween } from './math';
-
-export type CloudStyle = 'rounded' | 'elliptical';
-
-export interface CloudConfig {
-    count: number;
-    widthRange: [number, number];
-    heightRange: [number, number];
-    speedRange: [number, number];
-    opacityRange: [number, number];
-    yRange: [number, number]; // [min, max] as percentage of height
-    style?: CloudStyle;
-}
-
-export class CloudRenderer {
+export class CloudElement extends BaseElement {
     private clouds: Cloud[] = [];
     private cloudsInitialized = false;
+    private config: CloudConfig;
+    private currentWind: number = 0;
+    private mode: TimeMode = 'day'; // Default mode
 
-    constructor(
-        private ctx: RenderingContext2D,
-        private width: number,
-        private height: number
-    ) {}
+    constructor(ctx: RenderingContext2D, width: number, height: number, config: CloudConfig) {
+        super(ctx, width, height);
+        this.config = config;
+    }
 
-    initializeClouds(config: CloudConfig, speedMultiplier: number = 1): void {
+    setMode(mode: TimeMode): void {
+        this.mode = mode;
+    }
+
+    private initializeClouds(): void {
         if (this.cloudsInitialized) {
             return;
         }
 
         this.clouds = [];
-        for (let i = 0; i < config.count; i++) {
-            const yMin = this.height * config.yRange[0];
-            const yMax = this.height * config.yRange[1];
+        for (let i = 0; i < this.config.count; i++) {
+            const yMin = this.height * this.config.yRange[0];
+            const yMax = this.height * this.config.yRange[1];
             this.clouds.push({
                 x: Math.random() * this.width,
                 y: Math.random() * (yMax - yMin) + yMin,
-                width: randomBetween(config.widthRange[0], config.widthRange[1]),
-                height: randomBetween(config.heightRange[0], config.heightRange[1]),
-                speed: randomBetween(config.speedRange[0], config.speedRange[1]) * speedMultiplier,
-                opacity: randomBetween(config.opacityRange[0], config.opacityRange[1]),
+                width: randomBetween(this.config.widthRange[0], this.config.widthRange[1]),
+                height: randomBetween(this.config.heightRange[0], this.config.heightRange[1]),
+                speed: randomBetween(this.config.speedRange[0], this.config.speedRange[1]),
+                opacity: randomBetween(this.config.opacityRange[0], this.config.opacityRange[1]),
             });
         }
 
         this.cloudsInitialized = true;
     }
 
-    drawClouds(mode: TimeMode, wind: number = 0, style: CloudStyle = 'rounded'): void {
+    update(): void {
         if (!this.cloudsInitialized) {
-            return;
+            this.initializeClouds();
         }
 
         this.clouds.forEach(cloud => {
-            cloud.x += cloud.speed + wind;
+            cloud.x += cloud.speed + this.currentWind;
             if (cloud.x > this.width + cloud.width) {
                 cloud.x = -cloud.width;
             } else if (cloud.x < -cloud.width) {
                 cloud.x = this.width + cloud.width;
             }
+        });
+    }
 
+    render(): void {
+        if (!this.cloudsInitialized) {
+            this.initializeClouds();
+        }
+
+        this.clouds.forEach(cloud => {
             const cloudColor =
-                mode === 'night' ? `rgba(70, 80, 90, ${cloud.opacity})` : `rgba(255, 255, 255, ${cloud.opacity})`;
+                this.mode === 'night' ? `rgba(70, 80, 90, ${cloud.opacity})` : `rgba(255, 255, 255, ${cloud.opacity})`;
 
             this.ctx.fillStyle = cloudColor;
-            if (style === 'elliptical') {
+            if (this.config.style === 'elliptical') {
                 this.drawEllipticalCloud(cloud.x, cloud.y, cloud.width, cloud.height);
             } else {
                 this.drawRoundedCloud(cloud.x, cloud.y, cloud.width, cloud.height);
             }
         });
+    }
+
+    setWind(wind: number): void {
+        this.currentWind = wind;
+    }
+
+    resize(width: number, height: number): void {
+        super.resize(width, height);
+        this.cloudsInitialized = false;
+        this.clouds = [];
     }
 
     private drawRoundedCloud(x: number, y: number, w: number, h: number): void {
@@ -97,12 +108,5 @@ export class CloudRenderer {
         this.ctx.beginPath();
         this.ctx.ellipse(x + w * 0.85, y + h * 0.5, w * 0.25, h * 0.5, 0, 0, Math.PI * 2);
         this.ctx.fill();
-    }
-
-    resize(width: number, height: number): void {
-        this.width = width;
-        this.height = height;
-        this.cloudsInitialized = false;
-        this.clouds = [];
     }
 }

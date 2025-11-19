@@ -1,6 +1,5 @@
-// src/effects/base.ts
-
 import { IntensityConfig, RenderingContext2D, WeatherIntensity, getIntensityConfig } from '../types';
+import { WeatherElement } from '../elements';
 
 export abstract class WeatherEffect {
     protected ctx: RenderingContext2D;
@@ -10,6 +9,7 @@ export abstract class WeatherEffect {
     protected intensity: WeatherIntensity;
     protected intensityConfig: IntensityConfig;
     protected wind: number;
+    protected elements: WeatherElement[] = [];
 
     constructor(
         ctx: RenderingContext2D,
@@ -28,12 +28,28 @@ export abstract class WeatherEffect {
 
     abstract render(time: number): void;
 
+    protected renderElements(time: number): void {
+        this.elements.forEach(element => element.render(time));
+    }
+
     update(): void {
         this.time += 1;
+        this.elements.forEach(element => element.update(this.time));
     }
 
     setWind(wind: number): void {
         this.wind = wind;
+        this.elements.forEach(element => {
+            if (element.setWind) {
+                element.setWind(wind);
+            }
+        });
+    }
+
+    resize(width: number, height: number): void {
+        this.width = width;
+        this.height = height;
+        this.elements.forEach(element => element.resize(width, height));
     }
 
     protected getParticleCount(baseCount: number): number {
@@ -48,6 +64,8 @@ export abstract class WeatherEffect {
         return baseOpacity * this.intensityConfig.opacity;
     }
 
+    // Deprecated helper methods (kept just in case subclasses still use them directly for some reason,
+    // but they should move to elements)
     protected drawGradient(
         x1: number,
         y1: number,

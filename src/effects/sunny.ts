@@ -1,9 +1,6 @@
-// src/effects/sunny.ts
-
 import { WeatherEffect } from './base';
-import { RenderingContext2D, TimeMode, WeatherIntensity } from '../types';
-import { SkyRenderer, BackgroundColors } from '../utils/sky-renderer';
-import { CloudRenderer } from '../utils/cloud-renderer';
+import { RenderingContext2D, TimeMode, WeatherIntensity, BackgroundColors } from '../types';
+import { BackgroundElement, SunElement, MoonElement, StarsElement, CloudElement, CloudConfig } from '../elements';
 
 const BACKGROUND_COLORS: BackgroundColors = {
     day: ['#4a90e2', '#87ceeb'],
@@ -11,9 +8,6 @@ const BACKGROUND_COLORS: BackgroundColors = {
 };
 
 export class SunnyEffect extends WeatherEffect {
-    private skyRenderer: SkyRenderer;
-    private cloudRenderer: CloudRenderer;
-
     constructor(
         ctx: RenderingContext2D,
         width: number,
@@ -23,32 +17,48 @@ export class SunnyEffect extends WeatherEffect {
         wind: number = 0
     ) {
         super(ctx, width, height, intensity, wind);
-        this.skyRenderer = new SkyRenderer(ctx, width, height);
-        this.cloudRenderer = new CloudRenderer(ctx, width, height);
 
-        // Initialize clouds
-        this.cloudRenderer.initializeClouds(
-            {
-                count: 3,
-                widthRange: [80, 120],
-                heightRange: [30, 40],
-                speedRange: [0.1, 0.3],
-                opacityRange: [0.4, 0.5],
-                yRange: [0.1, 0.5],
-            },
-            this.intensityConfig.speed
+        // 1. Background
+        const bgColors = this.mode === 'night' ? BACKGROUND_COLORS.night : BACKGROUND_COLORS.day;
+        this.elements.push(
+            new BackgroundElement(ctx, width, height, {
+                topColor: bgColors[0],
+                bottomColor: bgColors[1],
+            })
         );
 
-        // Initialize stars
-        this.skyRenderer.initializeStars(this.mode);
+        // 2. Stars (Night only)
+        if (this.mode === 'night') {
+            this.elements.push(new StarsElement(ctx, width, height));
+        }
+
+        // 3. Sun (Day) or Moon (Night)
+        if (this.mode === 'day') {
+            this.elements.push(new SunElement(ctx, width, height));
+        } else {
+            this.elements.push(new MoonElement(ctx, width, height));
+        }
+
+        // 4. Clouds
+        const cloudConfig: CloudConfig = {
+            count: 3,
+            widthRange: [80, 120],
+            heightRange: [30, 40],
+            speedRange: [0.1, 0.3],
+            opacityRange: [0.4, 0.5],
+            yRange: [0.1, 0.5],
+        };
+        // Adjust speed based on intensity
+        const speedMult = this.intensityConfig.speed;
+        cloudConfig.speedRange = [cloudConfig.speedRange[0] * speedMult, cloudConfig.speedRange[1] * speedMult];
+
+        const cloudElement = new CloudElement(ctx, width, height, cloudConfig);
+        cloudElement.setMode(this.mode);
+        cloudElement.setWind(this.wind);
+        this.elements.push(cloudElement);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    render(_time: number): void {
-        this.skyRenderer.drawBackground(BACKGROUND_COLORS, this.mode);
-        this.skyRenderer.drawStars(this.mode);
-        this.skyRenderer.drawSun(this.mode);
-        this.skyRenderer.drawMoon(this.mode);
-        this.cloudRenderer.drawClouds(this.mode, this.wind);
+    render(time: number): void {
+        this.renderElements(time);
     }
 }

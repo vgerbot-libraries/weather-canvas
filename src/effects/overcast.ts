@@ -1,9 +1,6 @@
-// src/effects/overcast.ts
-
 import { WeatherEffect } from './base';
-import { RenderingContext2D, TimeMode, WeatherIntensity } from '../types';
-import { SkyRenderer, BackgroundColors } from '../utils/sky-renderer';
-import { CloudRenderer } from '../utils/cloud-renderer';
+import { RenderingContext2D, TimeMode, WeatherIntensity, BackgroundColors } from '../types';
+import { BackgroundElement, CloudElement } from '../elements';
 
 const BACKGROUND_COLORS: BackgroundColors = {
     day: ['#778899', '#a0aec0'],
@@ -11,9 +8,6 @@ const BACKGROUND_COLORS: BackgroundColors = {
 };
 
 export class OvercastEffect extends WeatherEffect {
-    private skyRenderer: SkyRenderer;
-    private cloudRenderer: CloudRenderer;
-
     constructor(
         ctx: RenderingContext2D,
         width: number,
@@ -23,11 +17,16 @@ export class OvercastEffect extends WeatherEffect {
         wind: number = 0
     ) {
         super(ctx, width, height, intensity, wind);
-        this.skyRenderer = new SkyRenderer(ctx, width, height);
-        this.cloudRenderer = new CloudRenderer(ctx, width, height);
 
-        // Initialize clouds
-        this.cloudRenderer.initializeClouds({
+        const bgColors = this.mode === 'night' ? BACKGROUND_COLORS.night : BACKGROUND_COLORS.day;
+        this.elements.push(
+            new BackgroundElement(ctx, width, height, {
+                topColor: bgColors[0],
+                bottomColor: bgColors[1],
+            })
+        );
+
+        const cloudElement = new CloudElement(ctx, width, height, {
             count: 7,
             widthRange: [100, 200],
             heightRange: [60, 100],
@@ -35,11 +34,12 @@ export class OvercastEffect extends WeatherEffect {
             opacityRange: [0.6, 1],
             yRange: [0, 0.5],
         });
+        cloudElement.setMode(this.mode);
+        cloudElement.setWind(this.wind);
+        this.elements.push(cloudElement);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    render(_time: number): void {
-        this.skyRenderer.drawBackground(BACKGROUND_COLORS, this.mode);
-        this.cloudRenderer.drawClouds(this.mode, this.wind);
+    render(time: number): void {
+        this.renderElements(time);
     }
 }

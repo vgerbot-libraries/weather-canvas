@@ -1,6 +1,11 @@
-// src/renderer.ts
-
-import { WeatherType, TimeMode, RenderOptions, WeatherIntensity, RenderingContext2D } from './types';
+import {
+    WeatherType,
+    TimeMode,
+    RenderOptions,
+    WeatherIntensity,
+    RenderingContext2D,
+    CustomWeatherConfig,
+} from './types';
 import {
     SunnyEffect,
     CloudyEffect,
@@ -11,6 +16,7 @@ import {
     FoggyEffect,
     ThunderstormEffect,
     WeatherEffect,
+    CustomEffect,
 } from './effects';
 
 /**
@@ -33,6 +39,7 @@ export class WeatherCanvasRenderer {
     private currentWind: number = 0;
 
     private effectMap: Map<string, WeatherEffect> = new Map();
+    private customWeatherMap: Map<string, CustomWeatherConfig> = new Map();
 
     /**
      * Constructor
@@ -78,7 +85,28 @@ export class WeatherCanvasRenderer {
             ['day', 'night'].forEach(mode => {
                 ['light', 'moderate', 'heavy'].forEach(intensity => {
                     const effect = this.createEffect(type, mode as TimeMode, intensity as WeatherIntensity);
-                    const key = `${type}_${mode}_${intensity}`;
+                    if (effect) {
+                        const key = `${type}_${mode}_${intensity}`;
+                        this.effectMap.set(key, effect);
+                    }
+                });
+            });
+        });
+
+        // Re-initialize custom effects if any exist (useful when resizing)
+        this.customWeatherMap.forEach((config, name) => {
+            ['day', 'night'].forEach(mode => {
+                ['light', 'moderate', 'heavy'].forEach(intensity => {
+                    const effect = new CustomEffect(
+                        this.ctx,
+                        this.width,
+                        this.height,
+                        config,
+                        mode as TimeMode,
+                        intensity as WeatherIntensity,
+                        this.currentWind
+                    );
+                    const key = `${name}_${mode}_${intensity}`;
                     this.effectMap.set(key, effect);
                 });
             });
@@ -88,7 +116,13 @@ export class WeatherCanvasRenderer {
     /**
      * Create effect instance for specified weather, time mode and intensity
      */
-    private createEffect(weatherType: WeatherType, mode: TimeMode, intensity: WeatherIntensity): WeatherEffect {
+    private createEffect(weatherType: WeatherType, mode: TimeMode, intensity: WeatherIntensity): WeatherEffect | null {
+        // Check custom weather first
+        if (this.customWeatherMap.has(weatherType as string)) {
+            const config = this.customWeatherMap.get(weatherType as string)!;
+            return new CustomEffect(this.ctx, this.width, this.height, config, mode, intensity, this.currentWind);
+        }
+
         switch (weatherType) {
             case 'sunny':
                 return new SunnyEffect(this.ctx, this.width, this.height, mode, intensity, this.currentWind);
@@ -107,8 +141,33 @@ export class WeatherCanvasRenderer {
             case 'thunderstorm':
                 return new ThunderstormEffect(this.ctx, this.width, this.height, mode, intensity, this.currentWind);
             default:
-                return new SunnyEffect(this.ctx, this.width, this.height, mode, intensity, this.currentWind);
+                return null;
         }
+    }
+
+    /**
+     * Register a custom weather effect configuration
+     * @param name Unique name for the weather effect
+     * @param config Configuration object defining the elements and background
+     */
+    registerWeather(name: string, config: CustomWeatherConfig): void {
+        this.customWeatherMap.set(name, config);
+        // Pre-generate effects for this new type
+        ['day', 'night'].forEach(mode => {
+            ['light', 'moderate', 'heavy'].forEach(intensity => {
+                const effect = new CustomEffect(
+                    this.ctx,
+                    this.width,
+                    this.height,
+                    config,
+                    mode as TimeMode,
+                    intensity as WeatherIntensity,
+                    this.currentWind
+                );
+                const key = `${name}_${mode}_${intensity}`;
+                this.effectMap.set(key, effect);
+            });
+        });
     }
 
     /**
@@ -120,14 +179,26 @@ export class WeatherCanvasRenderer {
         this.currentIntensity = intensity;
 
         const key = `${weatherType}_${mode}_${intensity}`;
-        this.currentEffect = this.effectMap.get(key)!;
+        let effect = this.effectMap.get(key);
 
-        if (!this.currentEffect) {
-            const effect = this.createEffect(weatherType, mode, intensity);
-            this.effectMap.set(key, effect);
-            this.currentEffect = effect;
+        if (!effect) {
+            const newEffect = this.createEffect(weatherType, mode, intensity);
+            if (newEffect) {
+                this.effectMap.set(key, newEffect);
+                effect = newEffect;
+            } else {
+                // Fallback to sunny if type not found
+                console.warn(`Weather type '${weatherType}' not found, falling back to sunny.`);
+                const fallbackKey = `sunny_${mode}_${intensity}`;
+                effect = this.effectMap.get(fallbackKey);
+                if (!effect) {
+                    effect = new SunnyEffect(this.ctx, this.width, this.height, mode, intensity, this.currentWind);
+                    this.effectMap.set(fallbackKey, effect);
+                }
+            }
         }
 
+        this.currentEffect = effect!;
         this.currentEffect.setWind(this.currentWind);
     }
 
@@ -193,12 +264,8 @@ export class WeatherCanvasRenderer {
         this.effectMap.clear();
         this.initializeEffects();
 
-        if (this.currentEffect) {
-            const effect = this.createEffect(this.currentWeather, this.currentMode, this.currentIntensity);
-            this.currentEffect = effect;
-            const key = `${this.currentWeather}_${this.currentMode}_${this.currentIntensity}`;
-            this.effectMap.set(key, effect);
-        }
+        // Re-apply current weather to generate currentEffect
+        this.render(this.currentWeather, this.currentMode, this.currentIntensity);
     }
 
     /**

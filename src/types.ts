@@ -1,15 +1,26 @@
 // src/types.ts
 
-export type WeatherType = 'sunny' | 'cloudy' | 'overcast' | 'rainy' | 'snowy' | 'haze' | 'foggy' | 'thunderstorm';
+export type WeatherType =
+    | 'sunny'
+    | 'cloudy'
+    | 'overcast'
+    | 'rainy'
+    | 'snowy'
+    | 'haze'
+    | 'foggy'
+    | 'thunderstorm'
+    | string;
 
 export type TimeMode = 'day' | 'night';
 export type RenderingContext2D = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
 
+export type BackgroundColors = {
+    day: [string, string];
+    night: [string, string];
+};
+
 /**
  * Weather intensity levels
- * light: Light (e.g., light rain, light fog)
- * moderate: Moderate (e.g., moderate rain, moderate fog)
- * heavy: Heavy (e.g., heavy rain, dense fog)
  */
 export const enum WeatherIntensity {
     light = 'light',
@@ -21,11 +32,6 @@ export interface RenderOptions {
     width?: number;
     height?: number;
     fps?: number;
-    /**
-     * Horizontal wind speed.
-     * Positive values blow to the right, negative to the left.
-     * Typical range: -2 to 2.
-     */
     wind?: number;
 }
 
@@ -70,6 +76,80 @@ export interface IntensityConfig {
     speed: number;
     particleCount: number;
     description: string;
+}
+
+// --- Element Configs ---
+
+export type CloudStyle = 'rounded' | 'elliptical';
+
+export interface CloudConfig {
+    count: number;
+    widthRange: [number, number];
+    heightRange: [number, number];
+    speedRange: [number, number];
+    opacityRange: [number, number];
+    yRange: [number, number]; // [min, max] as percentage of height
+    style?: CloudStyle;
+}
+
+export interface RainConfig {
+    count: number;
+    speed: number;
+    opacity: number;
+}
+
+export interface SnowConfig {
+    count: number;
+    speed: number;
+    opacity: number;
+}
+
+export interface FogConfig {
+    count: number;
+    color: string; // 'R, G, B'
+}
+
+export interface LightningConfig {
+    color?: string;
+}
+
+export interface StarsConfig {
+    count?: number;
+}
+
+export interface BackgroundConfig {
+    topColor: string;
+    bottomColor: string;
+}
+
+// --- Custom Weather Config ---
+
+export type WeatherElementType =
+    | 'sun'
+    | 'moon'
+    | 'stars'
+    | 'cloud'
+    | 'rain'
+    | 'snow'
+    | 'fog'
+    | 'lightning'
+    | 'background';
+
+export interface ElementConfig {
+    type: WeatherElementType;
+    options?: CloudConfig | RainConfig | SnowConfig | FogConfig | LightningConfig | StarsConfig | BackgroundConfig; // Strictly typed in implementation: CloudConfig | RainConfig | ...
+}
+
+export interface CustomWeatherConfig {
+    background: {
+        day: [string, string]; // top, bottom
+        night: [string, string];
+    };
+    elements: Array<{
+        type: WeatherElementType;
+        options?: CloudConfig | RainConfig | SnowConfig | FogConfig | LightningConfig | StarsConfig | BackgroundConfig;
+        modes?: TimeMode[]; // If undefined, applies to both
+    }>;
 }
 
 // Weather intensity configuration
