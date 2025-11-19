@@ -30,6 +30,7 @@ export class WeatherCanvasRenderer {
     private currentMode: TimeMode = 'day';
     private currentIntensity: WeatherIntensity = WeatherIntensity.moderate;
     private currentEffect: WeatherEffect | null = null;
+    private currentWind: number = 0;
 
     private effectMap: Map<string, WeatherEffect> = new Map();
 
@@ -49,6 +50,7 @@ export class WeatherCanvasRenderer {
         this.width = options?.width || canvas.width || 700;
         this.height = options?.height || canvas.height || 400;
         this.fps = options?.fps || 60;
+        this.currentWind = options?.wind || 0;
         this.frameInterval = 1000 / this.fps;
 
         this.canvas.width = this.width;
@@ -89,23 +91,23 @@ export class WeatherCanvasRenderer {
     private createEffect(weatherType: WeatherType, mode: TimeMode, intensity: WeatherIntensity): WeatherEffect {
         switch (weatherType) {
             case 'sunny':
-                return new SunnyEffect(this.ctx, this.width, this.height, mode, intensity);
+                return new SunnyEffect(this.ctx, this.width, this.height, mode, intensity, this.currentWind);
             case 'cloudy':
-                return new CloudyEffect(this.ctx, this.width, this.height, mode, intensity);
+                return new CloudyEffect(this.ctx, this.width, this.height, mode, intensity, this.currentWind);
             case 'overcast':
-                return new OvercastEffect(this.ctx, this.width, this.height, mode, intensity);
+                return new OvercastEffect(this.ctx, this.width, this.height, mode, intensity, this.currentWind);
             case 'rainy':
-                return new RainyEffect(this.ctx, this.width, this.height, mode, intensity);
+                return new RainyEffect(this.ctx, this.width, this.height, mode, intensity, this.currentWind);
             case 'snowy':
-                return new SnowyEffect(this.ctx, this.width, this.height, mode, intensity);
+                return new SnowyEffect(this.ctx, this.width, this.height, mode, intensity, this.currentWind);
             case 'haze':
-                return new HazeEffect(this.ctx, this.width, this.height, mode, intensity);
+                return new HazeEffect(this.ctx, this.width, this.height, mode, intensity, this.currentWind);
             case 'foggy':
-                return new FoggyEffect(this.ctx, this.width, this.height, mode, intensity);
+                return new FoggyEffect(this.ctx, this.width, this.height, mode, intensity, this.currentWind);
             case 'thunderstorm':
-                return new ThunderstormEffect(this.ctx, this.width, this.height, mode, intensity);
+                return new ThunderstormEffect(this.ctx, this.width, this.height, mode, intensity, this.currentWind);
             default:
-                return new SunnyEffect(this.ctx, this.width, this.height, mode, intensity);
+                return new SunnyEffect(this.ctx, this.width, this.height, mode, intensity, this.currentWind);
         }
     }
 
@@ -125,6 +127,8 @@ export class WeatherCanvasRenderer {
             this.effectMap.set(key, effect);
             this.currentEffect = effect;
         }
+
+        this.currentEffect.setWind(this.currentWind);
     }
 
     /**
@@ -219,6 +223,16 @@ export class WeatherCanvasRenderer {
     }
 
     /**
+     * Change wind speed
+     */
+    setWind(wind: number): void {
+        this.currentWind = wind;
+        if (this.currentEffect) {
+            this.currentEffect.setWind(wind);
+        }
+    }
+
+    /**
      * Clear Canvas
      */
     clear(): void {
@@ -245,6 +259,10 @@ export class WeatherCanvasRenderer {
 
     getIntensity(): WeatherIntensity {
         return this.currentIntensity;
+    }
+
+    getWind(): number {
+        return this.currentWind;
     }
 
     getCanvas(): HTMLCanvasElement | OffscreenCanvas {

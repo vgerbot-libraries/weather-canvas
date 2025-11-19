@@ -26,7 +26,7 @@ export class ParticlePool {
         };
     }
 
-    get(x: number, y: number, vx: number, vy: number, life: number): Particle {
+    get(x: number, y: number, vx: number, vy: number, life: number, gravity: number = 0): Particle {
         let particle: Particle;
         if (this.pool.length > 0) {
             particle = this.pool.pop()!;
@@ -40,6 +40,7 @@ export class ParticlePool {
         particle.life = 1;
         particle.maxLife = life;
         particle.opacity = 1;
+        particle.gravity = gravity;
         this.active.push(particle);
         return particle;
     }
@@ -53,6 +54,9 @@ export class ParticlePool {
             if (p.life <= 0) {
                 this.pool.push(this.active.splice(i, 1)[0] as Particle);
             } else {
+                if (p.gravity) {
+                    p.vy += p.gravity;
+                }
                 p.x += p.vx;
                 p.y += p.vy;
             }

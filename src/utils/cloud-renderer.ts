@@ -47,15 +47,17 @@ export class CloudRenderer {
         this.cloudsInitialized = true;
     }
 
-    drawClouds(mode: TimeMode, style: CloudStyle = 'rounded'): void {
+    drawClouds(mode: TimeMode, wind: number = 0, style: CloudStyle = 'rounded'): void {
         if (!this.cloudsInitialized) {
             return;
         }
 
         this.clouds.forEach(cloud => {
-            cloud.x += cloud.speed;
+            cloud.x += cloud.speed + wind;
             if (cloud.x > this.width + cloud.width) {
                 cloud.x = -cloud.width;
+            } else if (cloud.x < -cloud.width) {
+                cloud.x = this.width + cloud.width;
             }
 
             const cloudColor =

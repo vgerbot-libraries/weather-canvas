@@ -48,7 +48,9 @@ export class WeatherCanvas extends HTMLElement {
         const weatherType = (this.getAttribute('weather-type') || 'sunny') as WeatherType;
         const timeMode = (this.getAttribute('time-mode') || 'day') as TimeMode;
         const intensity = (this.getAttribute('intensity') || WeatherIntensity.moderate) as WeatherIntensity;
+        const wind = parseFloat(this.getAttribute('wind') || '0');
 
+        this.renderer.setWind(wind);
         this.renderer.render(weatherType, timeMode, intensity);
         this.renderer.start();
     }
@@ -61,7 +63,7 @@ export class WeatherCanvas extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['weather-type', 'time-mode', 'intensity', 'width', 'height'];
+        return ['weather-type', 'time-mode', 'intensity', 'width', 'height', 'wind'];
     }
 
     attributeChangedCallback(name: string, oldValue: string, newValue: string) {
@@ -90,6 +92,9 @@ export class WeatherCanvas extends HTMLElement {
                     this.canvas.height = parseInt(newValue, 10);
                     this.renderer?.setSize(this.canvas.width, this.canvas.height);
                 }
+                break;
+            case 'wind':
+                this.renderer.setWind(parseFloat(newValue));
                 break;
         }
     }

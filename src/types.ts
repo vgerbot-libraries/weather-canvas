@@ -21,6 +21,12 @@ export interface RenderOptions {
     width?: number;
     height?: number;
     fps?: number;
+    /**
+     * Horizontal wind speed.
+     * Positive values blow to the right, negative to the left.
+     * Typical range: -2 to 2.
+     */
+    wind?: number;
 }
 
 export interface WeatherConfig {
@@ -38,6 +44,7 @@ export interface Particle {
     maxLife: number;
     size?: number;
     opacity?: number;
+    gravity?: number;
 }
 
 export interface Cloud {

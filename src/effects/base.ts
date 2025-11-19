@@ -9,17 +9,20 @@ export abstract class WeatherEffect {
     protected time = 0;
     protected intensity: WeatherIntensity;
     protected intensityConfig: IntensityConfig;
+    protected wind: number;
 
     constructor(
         ctx: RenderingContext2D,
         width: number,
         height: number,
-        intensity: WeatherIntensity = WeatherIntensity.moderate
+        intensity: WeatherIntensity = WeatherIntensity.moderate,
+        wind: number = 0
     ) {
         this.ctx = ctx;
         this.width = width;
         this.height = height;
         this.intensity = intensity;
+        this.wind = wind;
         this.intensityConfig = getIntensityConfig(intensity);
     }
 
@@ -27,6 +30,10 @@ export abstract class WeatherEffect {
 
     update(): void {
         this.time += 1;
+    }
+
+    setWind(wind: number): void {
+        this.wind = wind;
     }
 
     protected getParticleCount(baseCount: number): number {

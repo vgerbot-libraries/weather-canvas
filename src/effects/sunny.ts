@@ -19,9 +19,10 @@ export class SunnyEffect extends WeatherEffect {
         width: number,
         height: number,
         private mode: TimeMode = 'day',
-        intensity: WeatherIntensity = WeatherIntensity.moderate
+        intensity: WeatherIntensity = WeatherIntensity.moderate,
+        wind: number = 0
     ) {
-        super(ctx, width, height, intensity);
+        super(ctx, width, height, intensity, wind);
         this.skyRenderer = new SkyRenderer(ctx, width, height);
         this.cloudRenderer = new CloudRenderer(ctx, width, height);
 
@@ -48,6 +49,6 @@ export class SunnyEffect extends WeatherEffect {
         this.skyRenderer.drawStars(this.mode);
         this.skyRenderer.drawSun(this.mode);
         this.skyRenderer.drawMoon(this.mode);
-        this.cloudRenderer.drawClouds(this.mode);
+        this.cloudRenderer.drawClouds(this.mode, this.wind);
     }
 }

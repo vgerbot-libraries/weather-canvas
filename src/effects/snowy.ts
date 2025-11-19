@@ -20,9 +20,10 @@ export class SnowyEffect extends WeatherEffect {
         width: number,
         height: number,
         private mode: TimeMode = 'day',
-        intensity: WeatherIntensity = WeatherIntensity.moderate
+        intensity: WeatherIntensity = WeatherIntensity.moderate,
+        wind: number = 0
     ) {
-        super(ctx, width, height, intensity);
+        super(ctx, width, height, intensity, wind);
         this.particlePool = new ParticlePool(200);
         this.skyRenderer = new SkyRenderer(ctx, width, height);
     }
@@ -34,6 +35,13 @@ export class SnowyEffect extends WeatherEffect {
         this.skyRenderer.drawMoon(this.mode);
     }
 
+    setWind(wind: number): void {
+        super.setWind(wind);
+        this.particlePool.getActive().forEach(p => {
+            p.vx = wind + randomBetween(-1, 1);
+        });
+    }
+
     private drawSnow(): void {
         const baseCount = 4;
         const snowflakeCount = this.getParticleCount(baseCount);
@@ -43,7 +51,7 @@ export class SnowyEffect extends WeatherEffect {
             const snowflake = this.particlePool.get(
                 Math.random() * this.width,
                 Math.random() * this.height - this.height,
-                randomBetween(-1, 1),
+                this.wind + randomBetween(-1, 1),
                 speed,
                 this.height / 2
             );

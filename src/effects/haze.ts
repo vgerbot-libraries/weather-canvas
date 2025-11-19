@@ -28,9 +28,10 @@ export class HazeEffect extends WeatherEffect {
         width: number,
         height: number,
         private mode: TimeMode = 'day',
-        intensity: WeatherIntensity = WeatherIntensity.moderate
+        intensity: WeatherIntensity = WeatherIntensity.moderate,
+        wind: number = 0
     ) {
-        super(ctx, width, height, intensity);
+        super(ctx, width, height, intensity, wind);
         this.skyRenderer = new SkyRenderer(ctx, width, height);
         this.skyRenderer.initializeStars(this.mode);
     }
@@ -71,10 +72,12 @@ export class HazeEffect extends WeatherEffect {
         }
 
         this.particles.forEach(particle => {
-            particle.x += particle.speed;
+            particle.x += particle.speed + this.wind;
 
             if (particle.x > this.width + particle.radius) {
                 particle.x = -particle.radius;
+            } else if (particle.x < -particle.radius) {
+                particle.x = this.width + particle.radius;
             }
 
             const gradient = this.ctx.createRadialGradient(

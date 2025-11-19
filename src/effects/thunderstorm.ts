@@ -31,9 +31,10 @@ export class ThunderstormEffect extends WeatherEffect {
         width: number,
         height: number,
         private mode: TimeMode = 'day',
-        intensity: WeatherIntensity = WeatherIntensity.moderate
+        intensity: WeatherIntensity = WeatherIntensity.moderate,
+        wind: number = 0
     ) {
-        super(ctx, width, height, intensity);
+        super(ctx, width, height, intensity, wind);
         this.skyRenderer = new SkyRenderer(ctx, width, height);
         this.cloudRenderer = new CloudRenderer(ctx, width, height);
     }
@@ -84,7 +85,7 @@ export class ThunderstormEffect extends WeatherEffect {
             this.intensityConfig.speed
         );
 
-        this.cloudRenderer.drawClouds(this.mode);
+        this.cloudRenderer.drawClouds(this.mode, this.wind);
     }
 
     private drawRain(): void {
@@ -94,6 +95,14 @@ export class ThunderstormEffect extends WeatherEffect {
 
         this.rainDrops.forEach(drop => {
             drop.y += drop.speed;
+            drop.x += this.wind;
+
+            if (this.wind > 0 && drop.x > this.width) {
+                drop.x = -20;
+            } else if (this.wind < 0 && drop.x < -20) {
+                drop.x = this.width;
+            }
+
             if (drop.y > this.height) {
                 drop.y = -drop.length;
                 drop.x = Math.random() * this.width;
@@ -103,7 +112,7 @@ export class ThunderstormEffect extends WeatherEffect {
             this.ctx.lineWidth = 1;
             this.ctx.beginPath();
             this.ctx.moveTo(drop.x, drop.y);
-            this.ctx.lineTo(drop.x, drop.y + drop.length);
+            this.ctx.lineTo(drop.x + this.wind * 2, drop.y + drop.length);
             this.ctx.stroke();
         });
     }
