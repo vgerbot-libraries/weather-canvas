@@ -25,3 +25,12 @@ document.getElementById('mode')?.addEventListener('change', event => {
 document.getElementById('intensity')?.addEventListener('change', event => {
     renderer.setIntensity((event.target as HTMLSelectElement).value as unknown as WeatherIntensity);
 });
+
+document.getElementById('wind')?.addEventListener('input', event => {
+    const value = parseFloat((event.target as HTMLInputElement).value);
+    renderer.setWind(value);
+    const windValue = document.getElementById('wind-value');
+    if (windValue) {
+        windValue.textContent = value.toString();
+    }
+});

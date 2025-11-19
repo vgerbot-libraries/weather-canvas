@@ -56,6 +56,11 @@
                 <option value="moderate">Moderate</option>
                 <option value="heavy">Heavy</option>
             </select>
+            <div class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700">
+                <label for="wind" class="font-medium">Wind:</label>
+                <input type="range" id="wind" name="wind" min="-5" max="5" step="0.1" value="0" class="w-32 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                <span id="wind-value" class="min-w-[2rem] text-center">0</span>
+            </div>
         </div>
         
         <canvas id="canvas" width="700" height="300" class="mt-4 rounded-lg w-full max-w-full"></canvas>

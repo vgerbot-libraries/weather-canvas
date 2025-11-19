@@ -22,3 +22,12 @@ document.getElementById('mode')?.addEventListener('change', event => {
 document.getElementById('intensity')?.addEventListener('change', event => {
     canvas.setAttribute('intensity', (event.target as HTMLSelectElement).value as WeatherIntensity);
 });
+
+document.getElementById('wind')?.addEventListener('input', event => {
+    const value = (event.target as HTMLInputElement).value;
+    canvas.setAttribute('wind', value);
+    const windValue = document.getElementById('wind-value');
+    if (windValue) {
+        windValue.textContent = value;
+    }
+});
