@@ -1,5 +1,3 @@
-// src/types.ts
-
 export type WeatherType =
     | 'sunny'
     | 'cloudy'
@@ -113,6 +111,10 @@ export interface LightningConfig {
     color?: string;
 }
 
+export interface MoonConfig {
+    date?: Date;
+}
+
 export interface StarsConfig {
     count?: number;
 }
@@ -137,7 +139,15 @@ export type WeatherElementType =
 
 export interface ElementConfig {
     type: WeatherElementType;
-    options?: CloudConfig | RainConfig | SnowConfig | FogConfig | LightningConfig | StarsConfig | BackgroundConfig; // Strictly typed in implementation: CloudConfig | RainConfig | ...
+    options?:
+        | CloudConfig
+        | RainConfig
+        | SnowConfig
+        | FogConfig
+        | LightningConfig
+        | StarsConfig
+        | BackgroundConfig
+        | MoonConfig;
 }
 
 export interface CustomWeatherConfig {
@@ -147,7 +157,15 @@ export interface CustomWeatherConfig {
     };
     elements: Array<{
         type: WeatherElementType;
-        options?: CloudConfig | RainConfig | SnowConfig | FogConfig | LightningConfig | StarsConfig | BackgroundConfig;
+        options?:
+            | CloudConfig
+            | RainConfig
+            | SnowConfig
+            | FogConfig
+            | LightningConfig
+            | StarsConfig
+            | BackgroundConfig
+            | MoonConfig;
         modes?: TimeMode[]; // If undefined, applies to both
     }>;
 }

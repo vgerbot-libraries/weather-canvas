@@ -61,7 +61,7 @@ export class CustomEffect extends WeatherEffect {
                 this.elements.push(new SunElement(this.ctx, this.width, this.height));
                 break;
             case 'moon':
-                this.elements.push(new MoonElement(this.ctx, this.width, this.height));
+                this.elements.push(new MoonElement(this.ctx, this.width, this.height, options));
                 break;
             case 'stars':
                 this.elements.push(new StarsElement(this.ctx, this.width, this.height, options || {}));
