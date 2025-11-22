@@ -1,12 +1,5 @@
 import { WeatherEffect } from './base';
-import {
-    RenderingContext2D,
-    TimeMode,
-    WeatherIntensity,
-    CustomWeatherConfig,
-    ElementType,
-    ElementConfig,
-} from '../types';
+import { RenderingContext2D, TimeMode, WeatherIntensity, CustomWeatherConfig, ElementConfig } from '../types';
 import {
     BackgroundElement,
     SunElement,

@@ -1,14 +1,13 @@
-import { WeatherEffect } from './base';
-import { RenderingContext2D, TimeMode, WeatherIntensity, BackgroundColors } from '../types';
 import {
     BackgroundElement,
-    SunElement,
-    MoonElement,
-    StarsElement,
     CloudElement,
-    CloudConfig,
+    MoonElement,
     ShootingStarsElement,
+    StarsElement,
+    SunElement,
 } from '../elements';
+import { BackgroundColors, CloudConfig, RenderingContext2D, TimeMode, WeatherIntensity } from '../types';
+import { WeatherEffect } from './base';
 
 const BACKGROUND_COLORS: BackgroundColors = {
     day: ['#87ceeb', '#b0d4f1'],
