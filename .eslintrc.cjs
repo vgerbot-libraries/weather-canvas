@@ -17,6 +17,21 @@ module.exports = {
                 '@typescript-eslint/explicit-module-boundary-types': 'off',
                 '@typescript-eslint/ban-types': 'off',
             },
+            excludedFiles: ['tests/**/*.ts'],
+        },
+        {
+            files: ['tests/**/*.ts'],
+            extends: [
+                //  Use the recommended rules from the @typescript-eslint/eslint-plugin
+                'plugin:@typescript-eslint/recommended',
+                'prettier',
+            ],
+            parserOptions: {
+                project: [__dirname + '/tests/tsconfig.json'],
+            },
+            rules: {
+                '@typescript-eslint/no-explicit-any': 'off',
+            }
         },
         {
             files: ['*.mjs', '*.js', '*.jsx', '*.es', '*.cjs'],

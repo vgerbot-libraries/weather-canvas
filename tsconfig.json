@@ -18,5 +18,5 @@
             "~/*": ["./src/*"]
         }
     },
-    "include": ["src", "tests", "dev", "jest.config.ts", "jest.setup.ts", "tsup.config.ts", "vite.config.ts", "examples"]
+    "include": ["src", "dev", "jest.config.ts", "jest.setup.ts", "tsup.config.ts", "vite.config.ts", "examples"]
 }
