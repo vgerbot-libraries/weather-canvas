@@ -1,6 +1,6 @@
 import { WeatherEffect } from './base';
 import { RenderingContext2D, TimeMode, WeatherIntensity, BackgroundColors } from '../types';
-import { BackgroundElement, StarsElement, MoonElement, FogElement } from '../elements';
+import { BackgroundElement, MoonElement, FogElement } from '../elements';
 
 const BACKGROUND_COLORS: BackgroundColors = {
     day: ['#c0c5ce', '#dfe3e8'],
@@ -26,7 +26,6 @@ export class FoggyEffect extends WeatherEffect {
             })
         );
 
-        this.elements.push(new StarsElement(ctx, width, height));
         this.elements.push(new MoonElement(ctx, width, height));
 
         const baseCount = 50;

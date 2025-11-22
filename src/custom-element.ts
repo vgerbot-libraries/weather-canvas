@@ -1,5 +1,5 @@
 import { WeatherCanvasRenderer } from './renderer';
-import { WeatherType, TimeMode, WeatherIntensity } from './types';
+import { WeatherType, TimeMode, WeatherIntensity, CustomWeatherConfig } from './types';
 
 const DEFAULT_WIDTH = 700;
 const DEFAULT_HEIGHT = 400;
@@ -103,6 +103,9 @@ export class WeatherCanvas extends HTMLElement {
     }
     stop() {
         this.renderer?.stop();
+    }
+    registerCustomWeather(name: string, config: CustomWeatherConfig) {
+        this.renderer?.registerWeather(name, config);
     }
 }
 

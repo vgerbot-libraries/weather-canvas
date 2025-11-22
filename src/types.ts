@@ -119,6 +119,20 @@ export interface StarsConfig {
     count?: number;
 }
 
+export interface ShootingStarsConfig {
+    frequency?: number;
+    speed?: number;
+    color?: string;
+    spawnInterval?: {
+        min: number;
+        max: number;
+    };
+    life?: {
+        min: number;
+        max: number;
+    };
+}
+
 export interface BackgroundConfig {
     topColor: string;
     bottomColor: string;
@@ -130,6 +144,7 @@ export type WeatherElementType =
     | 'sun'
     | 'moon'
     | 'stars'
+    | 'shooting-stars'
     | 'cloud'
     | 'rain'
     | 'snow'
@@ -137,37 +152,28 @@ export type WeatherElementType =
     | 'lightning'
     | 'background';
 
-export interface ElementConfig {
-    type: WeatherElementType;
-    options?:
-        | CloudConfig
-        | RainConfig
-        | SnowConfig
-        | FogConfig
-        | LightningConfig
-        | StarsConfig
-        | BackgroundConfig
-        | MoonConfig;
-}
+export type ElementConfig =
+    | { type: 'sun'; options?: undefined }
+    | { type: 'moon'; options?: MoonConfig }
+    | { type: 'stars'; options?: StarsConfig }
+    | { type: 'shooting-stars'; options?: ShootingStarsConfig }
+    | { type: 'cloud'; options: CloudConfig }
+    | { type: 'rain'; options: RainConfig }
+    | { type: 'snow'; options: SnowConfig }
+    | { type: 'fog'; options: FogConfig }
+    | { type: 'lightning'; options?: LightningConfig }
+    | { type: 'background'; options: BackgroundConfig };
 
 export interface CustomWeatherConfig {
     background: {
         day: [string, string]; // top, bottom
         night: [string, string];
     };
-    elements: Array<{
-        type: WeatherElementType;
-        options?:
-            | CloudConfig
-            | RainConfig
-            | SnowConfig
-            | FogConfig
-            | LightningConfig
-            | StarsConfig
-            | BackgroundConfig
-            | MoonConfig;
-        modes?: TimeMode[]; // If undefined, applies to both
-    }>;
+    elements: Array<
+        ElementConfig & {
+            modes?: TimeMode[]; // If undefined, applies to both
+        }
+    >;
 }
 
 // Weather intensity configuration

@@ -1,6 +1,6 @@
 import { WeatherEffect } from './base';
 import { RenderingContext2D, TimeMode, WeatherIntensity, BackgroundColors } from '../types';
-import { BackgroundElement, StarsElement, MoonElement, CloudElement, RainElement, LightningElement } from '../elements';
+import { BackgroundElement, MoonElement, CloudElement, RainElement, LightningElement } from '../elements';
 
 const BACKGROUND_COLORS: BackgroundColors = {
     day: ['#4a5568', '#718096'],
@@ -26,7 +26,6 @@ export class ThunderstormEffect extends WeatherEffect {
             })
         );
 
-        this.elements.push(new StarsElement(ctx, width, height));
         this.elements.push(new MoonElement(ctx, width, height));
 
         const cloudElement = new CloudElement(ctx, width, height, {

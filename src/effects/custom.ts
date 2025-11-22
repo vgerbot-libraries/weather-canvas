@@ -1,10 +1,18 @@
 import { WeatherEffect } from './base';
-import { RenderingContext2D, TimeMode, WeatherIntensity, CustomWeatherConfig, WeatherElementType } from '../types';
+import {
+    RenderingContext2D,
+    TimeMode,
+    WeatherIntensity,
+    CustomWeatherConfig,
+    ElementType,
+    ElementConfig,
+} from '../types';
 import {
     BackgroundElement,
     SunElement,
     MoonElement,
     StarsElement,
+    ShootingStarsElement,
     CloudElement,
     RainElement,
     SnowElement,
@@ -51,24 +59,27 @@ export class CustomEffect extends WeatherEffect {
                 return;
             }
 
-            this.addElement(elConfig.type, elConfig.options);
+            this.addElement(elConfig);
         });
     }
 
-    private addElement(type: WeatherElementType, options: any): void {
-        switch (type) {
+    private addElement(config: ElementConfig): void {
+        switch (config.type) {
             case 'sun':
                 this.elements.push(new SunElement(this.ctx, this.width, this.height));
                 break;
             case 'moon':
-                this.elements.push(new MoonElement(this.ctx, this.width, this.height, options));
+                this.elements.push(new MoonElement(this.ctx, this.width, this.height, config.options));
                 break;
             case 'stars':
-                this.elements.push(new StarsElement(this.ctx, this.width, this.height, options || {}));
+                this.elements.push(new StarsElement(this.ctx, this.width, this.height, config.options || {}));
+                break;
+            case 'shooting-stars':
+                this.elements.push(new ShootingStarsElement(this.ctx, this.width, this.height, config.options));
                 break;
             case 'cloud':
                 {
-                    const cloudEl = new CloudElement(this.ctx, this.width, this.height, options);
+                    const cloudEl = new CloudElement(this.ctx, this.width, this.height, config.options);
                     cloudEl.setMode(this.mode);
                     cloudEl.setWind(this.wind);
                     this.elements.push(cloudEl);
@@ -76,27 +87,27 @@ export class CustomEffect extends WeatherEffect {
                 break;
             case 'rain':
                 {
-                    const rainEl = new RainElement(this.ctx, this.width, this.height, options);
+                    const rainEl = new RainElement(this.ctx, this.width, this.height, config.options);
                     rainEl.setWind(this.wind);
                     this.elements.push(rainEl);
                 }
                 break;
             case 'snow':
                 {
-                    const snowEl = new SnowElement(this.ctx, this.width, this.height, options);
+                    const snowEl = new SnowElement(this.ctx, this.width, this.height, config.options);
                     snowEl.setWind(this.wind);
                     this.elements.push(snowEl);
                 }
                 break;
             case 'fog':
                 {
-                    const fogEl = new FogElement(this.ctx, this.width, this.height, options);
+                    const fogEl = new FogElement(this.ctx, this.width, this.height, config.options);
                     fogEl.setWind(this.wind);
                     this.elements.push(fogEl);
                 }
                 break;
             case 'lightning':
-                this.elements.push(new LightningElement(this.ctx, this.width, this.height, options || {}));
+                this.elements.push(new LightningElement(this.ctx, this.width, this.height, config.options || {}));
                 break;
             case 'background':
                 // Background is handled separately at start of init

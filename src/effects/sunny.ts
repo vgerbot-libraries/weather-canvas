@@ -1,6 +1,14 @@
 import { WeatherEffect } from './base';
 import { RenderingContext2D, TimeMode, WeatherIntensity, BackgroundColors } from '../types';
-import { BackgroundElement, SunElement, MoonElement, StarsElement, CloudElement, CloudConfig } from '../elements';
+import {
+    BackgroundElement,
+    SunElement,
+    MoonElement,
+    StarsElement,
+    CloudElement,
+    CloudConfig,
+    ShootingStarsElement,
+} from '../elements';
 
 const BACKGROUND_COLORS: BackgroundColors = {
     day: ['#4a90e2', '#87ceeb'],
@@ -27,9 +35,10 @@ export class SunnyEffect extends WeatherEffect {
             })
         );
 
-        // 2. Stars (Night only)
+        // 2. Stars and Shooting Stars (Night only)
         if (this.mode === 'night') {
             this.elements.push(new StarsElement(ctx, width, height));
+            this.elements.push(new ShootingStarsElement(ctx, width, height));
         }
 
         // 3. Sun (Day) or Moon (Night)

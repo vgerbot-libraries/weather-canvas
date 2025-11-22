@@ -44,9 +44,6 @@ export class SnowElement extends BaseElement {
 
         // Update wind for active particles is handled by emission direction + gravity/update logic
         // We could modify active particles here if we wanted wind changes to affect falling snow.
-        this.particlePool.getActive().forEach(p => {
-            // Optional: add wind turbulence
-        });
     }
 
     render(): void {

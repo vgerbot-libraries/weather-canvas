@@ -3,6 +3,7 @@ export * from './background';
 export * from './sun';
 export * from './moon';
 export * from './stars';
+export * from './shooting-stars';
 export * from './cloud';
 export * from './fog';
 export * from './lightning';
