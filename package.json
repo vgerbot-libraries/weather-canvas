@@ -1,6 +1,6 @@
 {
     "name": "@vgerbot/weather-canvas",
-    "version": "1.0.0",
+    "version": "0.0.0",
     "description": "A lightweight, high-performance HTML5 Canvas library for rendering dynamic weather effects. Supports various weather conditions, day/night cycles, and adjustable intensities.",
     "keywords": [
         "weather",
