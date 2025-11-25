@@ -38,10 +38,10 @@ describe('WeatherCanvasRenderer', () => {
     });
 
     it('should set weather type, mode, and intensity', () => {
-        renderer.render('sunny', 'day', WeatherIntensity.moderate);
+        renderer.render('sunny', 'day', 'moderate');
         expect(renderer['currentWeather']).toBe('sunny');
         expect(renderer['currentMode']).toBe('day');
-        expect(renderer['currentIntensity']).toBe(WeatherIntensity.moderate);
+        expect(renderer['currentIntensity']).toBe('moderate');
     });
 
     it('should set size', () => {
@@ -57,10 +57,10 @@ describe('WeatherCanvasRenderer', () => {
     });
 
     it('should get correct values', () => {
-        renderer.render('cloudy', 'night', WeatherIntensity.heavy);
+        renderer.render('cloudy', 'night', 'heavy');
         expect(renderer.getWeatherType()).toBe('cloudy');
         expect(renderer.getMode()).toBe('night');
-        expect(renderer.getIntensity()).toBe(WeatherIntensity.heavy);
+        expect(renderer.getIntensity()).toBe('heavy');
         expect(renderer.getCanvas()).toBe(canvas);
         expect(renderer.getWidth()).toBe(canvas.width);
         expect(renderer.getHeight()).toBe(canvas.height);

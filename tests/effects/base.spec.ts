@@ -28,7 +28,7 @@ describe('WeatherEffect', () => {
     });
 
     it('should initialize properties in constructor', () => {
-        const effect = new MockWeatherEffect(ctx, 100, 200, WeatherIntensity.light);
+        const effect = new MockWeatherEffect(ctx, 100, 200, 'light');
         // @ts-expect-error protected property
         expect(effect.ctx).toBe(ctx);
         // @ts-expect-error protected property
@@ -36,7 +36,7 @@ describe('WeatherEffect', () => {
         // @ts-expect-error protected property
         expect(effect.height).toBe(200);
         // @ts-expect-error protected property
-        expect(effect.intensity).toBe(WeatherIntensity.light);
+        expect(effect.intensity).toBe('light');
     });
 
     it('should update time', () => {
@@ -49,35 +49,35 @@ describe('WeatherEffect', () => {
     });
 
     it('should get particle count based on intensity', () => {
-        const lightEffect = new MockWeatherEffect(ctx, 100, 200, WeatherIntensity.light);
+        const lightEffect = new MockWeatherEffect(ctx, 100, 200, 'light');
         expect(lightEffect.testGetParticleCount(100)).toBe(50);
 
-        const moderateEffect = new MockWeatherEffect(ctx, 100, 200, WeatherIntensity.moderate);
+        const moderateEffect = new MockWeatherEffect(ctx, 100, 200, 'moderate');
         expect(moderateEffect.testGetParticleCount(100)).toBe(100);
 
-        const heavyEffect = new MockWeatherEffect(ctx, 100, 200, WeatherIntensity.heavy);
+        const heavyEffect = new MockWeatherEffect(ctx, 100, 200, 'heavy');
         expect(heavyEffect.testGetParticleCount(100)).toBe(180);
     });
 
     it('should get speed based on intensity', () => {
-        const lightEffect = new MockWeatherEffect(ctx, 100, 200, WeatherIntensity.light);
+        const lightEffect = new MockWeatherEffect(ctx, 100, 200, 'light');
         expect(lightEffect.testGetSpeed(10)).toBe(6);
 
-        const moderateEffect = new MockWeatherEffect(ctx, 100, 200, WeatherIntensity.moderate);
+        const moderateEffect = new MockWeatherEffect(ctx, 100, 200, 'moderate');
         expect(moderateEffect.testGetSpeed(10)).toBe(10);
 
-        const heavyEffect = new MockWeatherEffect(ctx, 100, 200, WeatherIntensity.heavy);
+        const heavyEffect = new MockWeatherEffect(ctx, 100, 200, 'heavy');
         expect(heavyEffect.testGetSpeed(10)).toBe(14);
     });
 
     it('should get opacity based on intensity', () => {
-        const lightEffect = new MockWeatherEffect(ctx, 100, 200, WeatherIntensity.light);
+        const lightEffect = new MockWeatherEffect(ctx, 100, 200, 'light');
         expect(lightEffect.testGetOpacity(1)).toBe(0.6);
 
-        const moderateEffect = new MockWeatherEffect(ctx, 100, 200, WeatherIntensity.moderate);
+        const moderateEffect = new MockWeatherEffect(ctx, 100, 200, 'moderate');
         expect(moderateEffect.testGetOpacity(1)).toBe(0.8);
 
-        const heavyEffect = new MockWeatherEffect(ctx, 100, 200, WeatherIntensity.heavy);
+        const heavyEffect = new MockWeatherEffect(ctx, 100, 200, 'heavy');
         expect(heavyEffect.testGetOpacity(1)).toBe(1);
     });
 });

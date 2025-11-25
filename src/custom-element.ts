@@ -19,6 +19,7 @@ export class WeatherCanvas extends HTMLElement {
                     width: fit-content;
                     height: fit-content;
                     overflow: hidden;
+                    line-height: 0;
                 }
                 canvas {
                     width: 100%;
@@ -47,7 +48,7 @@ export class WeatherCanvas extends HTMLElement {
 
         const weatherType = (this.getAttribute('weather-type') || 'sunny') as WeatherType;
         const timeMode = (this.getAttribute('time-mode') || 'day') as TimeMode;
-        const intensity = (this.getAttribute('intensity') || WeatherIntensity.moderate) as WeatherIntensity;
+        const intensity = (this.getAttribute('intensity') || 'moderate') as WeatherIntensity;
         const wind = parseFloat(this.getAttribute('wind') || '0');
 
         this.renderer.setWind(wind);

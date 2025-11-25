@@ -14,7 +14,7 @@ describe('HazeEffect', () => {
     });
 
     it('should render haze', () => {
-        const effect = new HazeEffect(ctx, 800, 600, 'day', WeatherIntensity.moderate);
+        const effect = new HazeEffect(ctx, 800, 600, 'day', 'moderate');
         effect.render(0);
 
         expect(ctx.fillRect).toHaveBeenCalledWith(0, 0, 800, 600);

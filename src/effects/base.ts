@@ -15,7 +15,7 @@ export abstract class WeatherEffect {
         ctx: RenderingContext2D,
         width: number,
         height: number,
-        intensity: WeatherIntensity = WeatherIntensity.moderate,
+        intensity: WeatherIntensity = 'moderate',
         wind: number = 0
     ) {
         this.ctx = ctx;

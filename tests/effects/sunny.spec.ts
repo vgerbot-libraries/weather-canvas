@@ -14,7 +14,7 @@ describe('SunnyEffect', () => {
     });
 
     it('should render sun and sky', () => {
-        const effect = new SunnyEffect(ctx, 800, 600, 'day', WeatherIntensity.moderate);
+        const effect = new SunnyEffect(ctx, 800, 600, 'day', 'moderate');
         effect.render(0);
 
         expect(ctx.createRadialGradient).toHaveBeenCalled();

@@ -2,7 +2,7 @@ import { TimeMode, WeatherCanvasRenderer, WeatherIntensity, WeatherType } from '
 
 const renderer = new WeatherCanvasRenderer(document.getElementById('canvas') as HTMLCanvasElement);
 
-renderer.render('sunny', 'day', WeatherIntensity.light);
+renderer.render('sunny', 'day', 'light');
 
 renderer.start();
 

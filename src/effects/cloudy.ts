@@ -20,7 +20,7 @@ export class CloudyEffect extends WeatherEffect {
         width: number,
         height: number,
         private mode: TimeMode = 'day',
-        intensity: WeatherIntensity = WeatherIntensity.moderate,
+        intensity: WeatherIntensity = 'moderate',
         wind: number = 0
     ) {
         super(ctx, width, height, intensity, wind);
@@ -48,9 +48,9 @@ export class CloudyEffect extends WeatherEffect {
         }
 
         // 4. Clouds
-        const cloudCount = intensity === WeatherIntensity.light ? 3 : intensity === WeatherIntensity.heavy ? 7 : 5;
-        const opacityMin = intensity === WeatherIntensity.light ? 0.4 : 0.5;
-        const opacityMax = intensity === WeatherIntensity.heavy ? 0.9 : 0.8;
+        const cloudCount = intensity === 'light' ? 3 : intensity === 'heavy' ? 7 : 5;
+        const opacityMin = intensity === 'light' ? 0.4 : 0.5;
+        const opacityMax = intensity === 'heavy' ? 0.9 : 0.8;
 
         const cloudConfig: CloudConfig = {
             count: cloudCount,

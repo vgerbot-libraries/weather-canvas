@@ -20,11 +20,7 @@ export type BackgroundColors = {
 /**
  * Weather intensity levels
  */
-export const enum WeatherIntensity {
-    light = 'light',
-    moderate = 'moderate',
-    heavy = 'heavy',
-}
+export type WeatherIntensity = 'light' | 'moderate' | 'heavy';
 
 export interface RenderOptions {
     width?: number;

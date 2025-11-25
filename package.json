@@ -1,5 +1,5 @@
 {
-    "name": "@vgerbot-libraries/weather-canvas",
+    "name": "@vgerbot/weather-canvas",
     "version": "1.0.0",
     "description": "",
     "keywords": [],
@@ -11,8 +11,8 @@
         "type": "git",
         "url": "git+https://github.com/vgerbot-libraries/weather-canvas.git"
     },
-    "license": "ISC",
-    "author": "",
+    "license": "MIT",
+    "author": "ChienHsinYang <y1j2x345@gmail.com>",
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",

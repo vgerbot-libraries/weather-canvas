@@ -18,7 +18,7 @@ describe('ThunderstormEffect', () => {
     });
 
     it('should render thunderstorm', () => {
-        const effect = new ThunderstormEffect(ctx, 800, 600, 'day', WeatherIntensity.moderate);
+        const effect = new ThunderstormEffect(ctx, 800, 600, 'day', 'moderate');
         effect.render(0);
 
         expect(ctx.fillRect).toHaveBeenCalledWith(0, 0, 800, 600);

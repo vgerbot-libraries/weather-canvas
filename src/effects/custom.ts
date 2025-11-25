@@ -23,7 +23,7 @@ export class CustomEffect extends WeatherEffect {
         height: number,
         config: CustomWeatherConfig,
         mode: TimeMode = 'day',
-        intensity: WeatherIntensity = WeatherIntensity.moderate,
+        intensity: WeatherIntensity = 'moderate',
         wind: number = 0
     ) {
         super(ctx, width, height, intensity, wind);

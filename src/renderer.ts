@@ -34,7 +34,7 @@ export class WeatherCanvasRenderer {
 
     private currentWeather: WeatherType = 'sunny';
     private currentMode: TimeMode = 'day';
-    private currentIntensity: WeatherIntensity = WeatherIntensity.moderate;
+    private currentIntensity: WeatherIntensity = 'moderate';
     private currentEffect: WeatherEffect | null = null;
     private currentWind: number = 0;
 
@@ -173,7 +173,7 @@ export class WeatherCanvasRenderer {
     /**
      * Render specified weather, time mode and intensity
      */
-    render(weatherType: WeatherType, mode: TimeMode, intensity: WeatherIntensity = WeatherIntensity.moderate): void {
+    render(weatherType: WeatherType, mode: TimeMode, intensity: WeatherIntensity = 'moderate'): void {
         this.currentWeather = weatherType;
         this.currentMode = mode;
         this.currentIntensity = intensity;

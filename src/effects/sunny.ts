@@ -20,7 +20,7 @@ export class SunnyEffect extends WeatherEffect {
         width: number,
         height: number,
         private mode: TimeMode = 'day',
-        intensity: WeatherIntensity = WeatherIntensity.moderate,
+        intensity: WeatherIntensity = 'moderate',
         wind: number = 0
     ) {
         super(ctx, width, height, intensity, wind);

@@ -14,7 +14,7 @@ describe('FoggyEffect', () => {
     });
 
     it('should render fog', () => {
-        const effect = new FoggyEffect(ctx, 800, 600, 'day', WeatherIntensity.moderate);
+        const effect = new FoggyEffect(ctx, 800, 600, 'day', 'moderate');
         effect.render(0);
 
         expect(ctx.fillRect).toHaveBeenCalledWith(0, 0, 800, 600);
